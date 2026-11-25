@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Archivio Storico: Il Disastro di Bhopal - Progetto Scolastico</title>
+    <!-- Tailwind CSS per la grafica moderna -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons per le icone -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            color: #f8fafc;
+        }
+
+        .serif {
+            font-family: 'Merriweather', serif;
+        }
+
+        /* Animazione di cambio pagina nel lettore */
+        .page-flip-next {
+            animation: flipNext 0.4s ease-in-out forwards;
+        }
+
+        .page-flip-prev {
+            animation: flipPrev 0.4s ease-in-out forwards;
+        }
+
+        @keyframes flipNext {
+            0% { transform: rotateY(0deg); opacity: 1; }
+            50% { transform: rotateY(-90deg) scale(0.95); opacity: 0.3; }
+            100% { transform: rotateY(0deg); opacity: 1; }
+        }
+
+        @keyframes flipPrev {
+            0% { transform: rotateY(0deg); opacity: 1; }
+            50% { transform: rotateY(90deg) scale(0.95); opacity: 0.3; }
+            100% { transform: rotateY(0deg); opacity: 1; }
+        }
+
+        /* Stile carta stampata del documento */
+        .newspaper-paper {
+            background-color: #fcfbf7;
+            background-image: radial-gradient(#e5e7eb 0.5px, transparent 0.5px);
+            background-size: 10px 10px;
+            color: #1c1917;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.08), 0 10px 25px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 flex flex-col items-center justify-between min-h-screen">
+
+    <!-- Intestazione principale dell'app -->
+    <header class="text-center my-6">
+        <span class="bg-red-600/20 text-red-300 text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full border border-red-500/30 mb-3 inline-block">
+            Dossier Storico & Ambientale • 1984
+        </span>
+        <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-amber-300 via-orange-300 to-red-400 mb-2">
+            IL DISASTRO DI BHOPAL
+        </h1>
+        <p class="text-slate-400 max-w-2xl mx-auto text-sm md:text-base">
+            Esplora le quattro pagine dell'inchiesta sulla più grave catastrofe chimica della storia: dalle cause tecniche alla notte del 3 dicembre 1984, fino alle conseguenze umane e ambientali.
+        </p>
+    </header>
+
+    <!-- Giornale a 4 Pagine -->
+    <main class="w-full max-w-4xl mx-auto my-6 flex flex-col items-center">
+        <div class="newspaper-paper w-full rounded-xl p-6 md:p-10 text-slate-900 relative shadow-2xl min-h-[550px] flex flex-col justify-between">
+            <div>
+                <!-- Intestazione della pagina -->
+                <div class="flex justify-between items-center border-b-2 border-slate-800 pb-3 mb-4">
+                    <div>
+                        <span id="newspaperCategory" class="text-xs font-bold text-red-700 uppercase tracking-widest"></span>
+                        <h2 id="newspaperTitle" class="serif font-black text-2xl md:text-4xl text-slate-900 tracking-tight"></h2>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs text-slate-500 block">Archivio Storico</span>
+                        <span class="text-sm font-semibold text-slate-700">Bhopal, 1984</span>
+                    </div>
+                </div>
+
+                <!-- Area Contenuto Articolo con Animazione -->
+                <div id="pageAnimatedArea" class="transition-all duration-300">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-4">
+                        <div class="rounded-lg overflow-hidden h-48 shadow-md">
+                            <img id="pageImage" src="" alt="Foto Documentario" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex flex-col justify-center">
+                            <h3 id="articleTitle" class="serif font-bold text-xl mb-2 text-slate-800"></h3>
+                            <p id="articleSummary" class="text-xs text-slate-600 leading-relaxed italic border-l-2 border-red-600 pl-3 mb-3"></p>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 border-t border-slate-200 pt-4">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Parole Chiave & Tag:</h4>
+                        <div id="topicsList" class="flex flex-wrap gap-2 mb-4"></div>
+                        <p id="pageContent" class="serif text-sm leading-relaxed text-slate-700 text-justify"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controlli di Navigazione Pagine -->
+            <div class="flex items-center justify-between border-t border-slate-300 pt-4 mt-6">
+                <button id="prevBtn" onclick="changePage(-1)" class="flex items-center gap-2 bg-slate-200 hover:bg-slate-300 px-4 py-2 rounded-lg text-xs font-bold text-slate-700 transition disabled:opacity-30 disabled:cursor-not-allowed">
+                    <i data-lucide="chevron-left" class="w-4 h-4"></i> Pagina Precedente
+                </button>
+
+                <div class="text-xs font-bold text-slate-500">
+                    Pagina <span id="currentPageNum" class="text-slate-900 font-extrabold">1</span> di <span id="totalPagesNum">4</span>
+                </div>
+
+                <button id="nextBtn" onclick="changePage(1)" class="flex items-center gap-2 bg-red-700 hover:bg-red-800 text-white px-4 py-2 rounded-lg text-xs font-bold transition disabled:opacity-30 disabled:cursor-not-allowed">
+                    Pagina Successiva <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ACCORDION / BOTTONE FONTI A SCOMPARSA (CON VIDEO E LINK REALI) -->
+        <div class="w-full mt-6">
+            <button onclick="toggleSources()" class="w-full bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 text-slate-300 py-3 px-6 rounded-xl flex items-center justify-between transition shadow-lg group">
+                <div class="flex items-center gap-3">
+                    <div class="bg-red-600/20 p-2 rounded-lg text-red-400 group-hover:bg-red-600/30 transition">
+                        <i data-lucide="book-open" class="w-5 h-5"></i>
+                    </div>
+                    <span class="font-semibold text-sm md:text-base text-white">Fonti, Video e Sitografia</span>
+                </div>
+                <div class="flex items-center gap-2 text-xs text-slate-400">
+                    <span id="sourcesToggleText">Mostra fonti</span>
+                    <i id="sourcesChevron" data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
+                </div>
+            </button>
+
+            <!-- Contenuto delle Fonti con Link Mascherati -->
+            <div id="sourcesContent" class="hidden mt-3 p-6 md:p-8 bg-slate-900/80 backdrop-blur-md rounded-2xl border border-slate-700/50 text-slate-300 shadow-xl transition-all duration-300">
+                <div class="border-b border-slate-700 pb-4 mb-6 flex items-center justify-between">
+                    <div>
+                        <span class="text-xs font-bold text-red-500 uppercase tracking-widest">Riferimenti dal Web</span>
+                        <h3 class="serif font-bold text-xl md:text-2xl text-white">Fonti e Video Ufficiali</h3>
+                    </div>
+                    <span class="text-xs bg-slate-800 text-slate-400 px-3 py-1 rounded-full border border-slate-700">Dossier Bhopal 1984</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs md:text-sm">
+                    
+                    <!-- Fonte 1: Video YouTube (Geopop) -->
+                    <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/60 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 mb-2 text-red-400 font-bold">
+                                <i data-lucide="video" class="w-4 h-4"></i>
+                                <span>Video di Approfondimento</span>
+                            </div>
+                            <p class="text-slate-400 mb-2">
+                                Video divulgativi e di ricostruzione storica sul disastro:
+                            </p>
+                            <ul class="space-y-1.5">
+                                <li>
+                                    <a href="https://m.youtube.com/watch?v=lXShCEYUvjc&pp=ygUOYmhvcGFsIEdlbyBwb3A%3D" target="_blank" class="text-sky-400 hover:underline font-semibold flex items-center gap-1">
+                                        <i data-lucide="external-link" class="w-3 h-3"></i> Guarda il video di Geopop sul Disastro di Bhopal
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://m.youtube.com/watch?v=lXShCEYUvjc&pp=ygUOYmhvcGFsIEdlbyBwb3A%3D" target="_blank" class="text-sky-400 hover:underline font-semibold flex items-center gap-1">
+                                        <i data-lucide="external-link" class="w-3 h-3"></i> Secondo video di Geopop sul disastro
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="mt-4 pt-2 border-t border-slate-700/60 text-[11px] text-slate-500">
+                            Canale YouTube di Geopop
+                        </div>
+                    </div>
+
+                    <!-- Fonte 2: Articoli online -->
+                    <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/60 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 mb-2 text-amber-400 font-bold">
+                                <i data-lucide="globe" class="w-4 h-4"></i>
+                                <span>Articoli e Ricerche Web</span>
+                            </div>
+                            <p class="text-slate-400 mb-2">
+                                Approfondimenti online trovati facilmente cercando su Google:
+                            </p>
+                            <ul class="space-y-1.5">
+                                <li>
+                                    <a href="https://it.wikipedia.org/wiki/Disastro_di_Bhopal" target="_blank" class="text-sky-400 hover:underline font-semibold flex items-center gap-1">
+                                        <i data-lucide="external-link" class="w-3 h-3"></i> Wikipedia: Disastro di Bhopal
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.fondazioneveronesi.it/magazine/oncologia/bhopal-40-anni-dopo" target="_blank" class="text-sky-400 hover:underline font-semibold flex items-center gap-1">
+                                        <i data-lucide="external-link" class="w-3 h-3"></i> Fondazione Veronesi: Bhopal 40 anni dopo
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="mt-4 pt-2 border-t border-slate-700/60 text-[11px] text-slate-500">
+                            Siti web informativi
+                        </div>
+                    </div>
+
+                    <!-- Fonte 3: Immagini e Media -->
+                    <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/60 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 mb-2 text-indigo-400 font-bold">
+                                <i data-lucide="image" class="w-4 h-4"></i>
+                                <span>Archivi Fotografici</span>
+                            </div>
+                            <p class="text-slate-400 mb-2">
+                                Foto di repertorio e illustrazioni libere utilizzate per arricchire la grafica del sito:
+                            </p>
+                            <ul class="space-y-1.5">
+                                <li>
+                                    <a href="https://commons.wikimedia.org" target="_blank" class="text-sky-400 hover:underline font-semibold flex items-center gap-1">
+                                        <i data-lucide="external-link" class="w-3 h-3"></i> Wikimedia Commons & Unsplash
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="mt-4 pt-2 border-t border-slate-700/60 text-[11px] text-slate-500">
+                            Materiale visivo del sito
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-slate-800 text-center text-xs text-slate-500">
+                    Progetto Scolastico Multimediale realizzato a scopo didattico e di sensibilizzazione sulla sicurezza industriale e ambientale.
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- LOGICA JAVASCRIPT -->
+    <script>
+        lucide.createIcons();
+
+        const newspaperPages = [
+            {
+                headerTitle: "PAGINA 1: LA FABBRICA",
+                category: "Contesto Storico & Cause Tecniche",
+                title: "La Union Carbide e la Rivoluzione Verde",
+                image: "https://images.unsplash.com/photo-1513828583688-c52646db42da?auto=format&fit=crop&w=600&q=80",
+                summary: "Alla fine degli anni '60 l'India puntava all'autosufficienza agricola incentivando la produzione locale di pesticidi.",
+                topics: ["Union Carbide", "India 1969", "Pesticida Sevin", "Industrializzazione"],
+                content: "Nel 1969 la multinazionale statunitense Union Carbide inaugurò a Bhopal, nel Madhya Pradesh, uno stabilimento per produrre il pesticida Sevin (carbaryl). Inizialmente accolto come simbolo di progresso economico e sostegno all'agricoltura indiana, l'impianto sorgeva in una zona densamente popolata, circondato da quartieri operai e baraccopoli cresciute rapidamente attorno alla fabbrica."
+            },
+            {
+                headerTitle: "PAGINA 2: IL RISCHIO E LA NOTTE",
+                category: "Cause Tecniche & Cronaca del 2-3 Dicembre 1984",
+                title: "L'Isocianato di Metile e il Serbatoio E610",
+                image: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=600&q=80",
+                summary: "Sistemi di sicurezza spenti per risparmiare e un lavaggio delle tubature che fece entrare acqua nel serbatoio E610.",
+                topics: ["Isocianato di Metile", "Serbatoio E610", "Sistemi Spenti", "Reazione Esotermica"],
+                content: "Per ridurre i costi di produzione, l'azienda stoccava in loco decine di tonnellate di isocianato di metile (MIC), ma a causa del calo delle vendite furono ridotti personale e manutenzione, lasciando spenti o inefficienti i dispositivi di sicurezza. Nella tarda serata del 2 dicembre 1984, durante un lavaggio delle tubature privo delle necessarie flange di isolamento, una grande quantità d'acqua penetrò nel serbatoio E610 innescando una reazione chimica esotermica incontrollabile: la temperatura superò i 200 °C e la pressione interna fece saltare le valvole di sicurezza."
+            },
+            {
+                headerTitle: "PAGINA 3: LA NUBE TOSSICA",
+                category: "Cronaca del 3 Dicembre 1984",
+                title: "La Fuga del Gas e il Caos negli Ospedali",
+                image: "https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?auto=format&fit=crop&w=600&q=80",
+                summary: "Poco dopo la mezzanotte oltre 40 tonnellate di gas letale si riversarono sulla città, travolgendo gli ospedali.",
+                topics: ["3 Dicembre 1984", "Nube Letale", "Emergenza Sanitaria", "Soccorsi"],
+                content: "Intorno alle 00:30 del 3 dicembre, una densa nube bianca di gas tossici fuoriuscì dallo sfiato dell'impianto. Essendo più pesante dell'aria, la nube rimase bassa al suolo, spinta dal vento verso i quartieri popolari di Bhopal. Gli abitanti si svegliarono con forti bruciori agli occhi, tosse violenta, vomito e difficoltà respiratorie, mentre gli ospedali venivano travolti da decine di migliaia di pazienti senza che l'azienda fornisse subito informazioni chiare sulla composizione chimica della nube né sugli antidoti."
+            },
+            {
+                headerTitle: "PAGINA 4: LE CICATRICI",
+                category: "Conseguenze, Ambiente & Giustizia",
+                title: "Bilancio Umano, Inquinamento e Giustizia",
+                image: "https://media.gettyimages.com/id/127980031/it/foto/victims-of-the-bhopal-tragedy-wait-to-be-treated-on-december-04-1984-at-bhopals-hospital-where.jpg?s=612x612&w=0&k=20&c=FViTGnG1VouNDU1NvGIe2yhEZz88T0foR-wl5BJQo28=",
+                summary: "Centinaia di migliaia di persone esposte, falde acquifere contaminate e un risarcimento giudicato insufficiente.",
+                topics: ["Bilancio Vittime", "Falde Acquifere", "Risarcimenti", "Memoria Storica"],
+                content: "Le stime ufficiali parlano di circa 3.800 morti nei primi giorni, ma studi indipendenti stimano tra i 15.000 e i 20.000 decessi negli anni successivi, con oltre 500.000 persone esposte e danni permanenti anche sulle generazioni successive. Lo stabilimento fu chiuso e abbandonato lasciando scorie capaci di contaminare le falde acquifere locali, mentre nel 1989 la Union Carbide versò 470 milioni di dollari in un accordo giudicato inadeguato dalle associazioni delle vittime, lasciando una lezione fondamentale sulla sicurezza industriale."
+            }
+        ];
+
+        let currentPageIndex = 0;
+
+        function toggleSources() {
+            const content = document.getElementById('sourcesContent');
+            const chevron = document.getElementById('sourcesChevron');
+            const toggleText = document.getElementById('sourcesToggleText');
+
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                chevron.style.transform = 'rotate(180deg)';
+                toggleText.innerText = 'Nascondi fonti';
+            } else {
+                content.classList.add('hidden');
+                chevron.style.transform = 'rotate(0deg)';
+                toggleText.innerText = 'Mostra fonti';
+            }
+        }
+
+        function changePage(direction) {
+            const newIndex = currentPageIndex + direction;
+
+            if (newIndex >= 0 && newIndex < newspaperPages.length) {
+                const animatedArea = document.getElementById('pageAnimatedArea');
+                const animClass = direction > 0 ? 'page-flip-next' : 'page-flip-prev';
+                
+                animatedArea.classList.add(animClass);
+
+                setTimeout(() => {
+                    currentPageIndex = newIndex;
+                    updatePageContent();
+                    animatedArea.classList.remove(animClass);
+                }, 200);
+            }
+        }
+
+        function updatePageContent() {
+            const page = newspaperPages[currentPageIndex];
+
+            document.getElementById('newspaperTitle').innerText = page.headerTitle;
+            document.getElementById('newspaperCategory').innerText = page.category;
+            document.getElementById('articleTitle').innerText = page.title;
+            document.getElementById('articleSummary').innerText = page.summary;
+            document.getElementById('pageImage').src = page.image;
+            document.getElementById('pageContent').innerText = page.content;
+
+            const topicsContainer = document.getElementById('topicsList');
+            topicsContainer.innerHTML = '';
+            page.topics.forEach(topic => {
+                const tag = document.createElement('span');
+                tag.className = 'bg-red-100 text-red-900 border border-red-200 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md';
+                tag.innerText = '#' + topic;
+                topicsContainer.appendChild(tag);
+            });
+
+            document.getElementById('currentPageNum').innerText = currentPageIndex + 1;
+            document.getElementById('totalPagesNum').innerText = newspaperPages.length;
+
+            document.getElementById('prevBtn').disabled = (currentPageIndex === 0);
+            document.getElementById('nextBtn').disabled = (currentPageIndex === newspaperPages.length - 1);
+        }
+
+        updatePageContent();
+    </script>
+</body>
+</html>
